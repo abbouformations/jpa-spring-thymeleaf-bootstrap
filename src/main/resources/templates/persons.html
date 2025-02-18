@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0" />
+  <title>Formation Java EE - Spring Boot Thymeleaf example</title>
+
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/css/style.css}" />
+  <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/6.7.2/css/all.min.css}"/>
+  <script type="text/javascript" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+  <script type="text/javascript" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+  <script th:src="@{/js/scripts.js}"></script>
+</head>
+
+<body>
+  <div th:replace="fragments/header :: header"></div>
+
+  <div class="container-fluid" style="max-width: 900px; margin: 0 auto;">
+    <h2 class="text-center">Persons list</h2>
+
+    <div th:if="${message != null}" class="alert alert-success alert-dismissible fade show text-center message" role="alert">
+      [[${message}]]
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+
+    <div class="my-3">
+      <form th:action="@{/persons}" method="get">
+        <div class="row d-flex">
+          <!-- Champ de recherche -->
+          <div class="col-md-8 mt-2">
+            <div class="input-group">
+              <span class="input-group-text"><i class="fa fa-search"></i></span>
+              <input id="keyword" type="search" name="keyword" th:value="${keyword}" class="form-control" placeholder="Enter keyword" aria-label="Search" required>
+            </div>
+          </div>
+
+          <!-- Bouton de recherche -->
+          <div class="col-md-4 mt-2">
+            <button type="submit" class="btn btn-secondary w-100">Search</button>
+          </div>
+        </div>
+      </form>
+
+      <!-- Bouton Clear -->
+      <div class="mt-2">
+        <button id="btnClear" type="button" class="btn btn-info w-100" aria-label="Clear search">Clear</button>
+      </div>
+    </div>
+
+    <script type="text/javascript">
+      document.getElementById('btnClear').addEventListener('click', function() {
+        // Efface le champ de recherche et soumet le formulaire vide
+        document.getElementById('keyword').value = '';
+        document.querySelector('form').submit();
+      });
+    </script>
+
+
+    <div th:if="${persons.size() > 0}">
+      <table class="table table-hover table-responsive-xl">
+        <thead class="thead-light">
+          <tr>
+            <th scope="col">Id</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col">Age</th>
+            <th scope="col">Married</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="person : ${persons}">
+            <th scope="row">[[${person.id}]]</th>
+            <td>[[${person.firstname}]]</td>
+            <td>[[${person.lastname}]]</td>
+            <td>[[${person.age}]]</td>
+            <td>
+              <a th:if="${person.married == true}" class="fa-regular fa-square-check"
+                th:href="@{'/persons/' + ${person.id} + '/married/false'}" title="Set person to Not married"></a>
+              <a th:if="${person.married == false}" class="fa-regular fa-square icon-dark"
+                th:href="@{'/persons/' + ${person.id} + '/married/true'}" title="Set person to married"></a>
+            </td>
+            <td>
+              <a th:href="@{'/persons/' + ${person.id}}" title="Edit this person"
+                class="fa-regular fa-pen-to-square icon-dark"></a>
+              &nbsp;
+              <a href="#" th:data-id="${person.id}"
+                 th:data-firstname="${person.firstname}"
+                 class="fa-regular fa-trash-can icon-dark btn-delete">
+              </a>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="" th:unless="${persons.size() > 0}">
+      <span>No Person found!</span>
+    </div>
+  </div>
+
+  <div id="confirmModal" class="modal fade" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Confirm Deletion</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <p id="confirmText"></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="yesBtn" class="btn btn-danger">Yes, Delete</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div th:replace="fragments/footer :: footer"></div>
+</body>
+</html>
