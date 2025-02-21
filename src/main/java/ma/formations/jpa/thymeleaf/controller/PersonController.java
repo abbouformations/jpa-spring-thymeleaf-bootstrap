@@ -50,7 +50,7 @@ public class PersonController {
             service.save(person);
             redirectAttributes.addFlashAttribute("message", "The Person has been saved successfully!");
         } catch (Exception e) {
-            redirectAttributes.addAttribute("message", e.getMessage());
+            redirectAttributes.addFlashAttribute("message", e.getMessage());
         }
         return "redirect:/persons";
     }
